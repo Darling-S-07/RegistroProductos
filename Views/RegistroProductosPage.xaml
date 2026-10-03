@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RegistroProductos.Views.RegistroProductosPage"
+             Title="Registro de Productos">
+    <ScrollView>
+        <VerticalStackLayout
+            Padding="30"
+            Spacing="10">
+
+            <Label
+                Text="Registro de Productos"
+                Style="{StaticResource Headline}"
+                SemanticProperties.HeadingLevel="Level1"
+                FontAttributes="Bold"
+                HorizontalOptions="Center"
+                FontSize="28" />
+
+            <Label Text="ID" />
+            <Entry
+                x:Name="IdEntry"
+                Placeholder="Se genera automáticamente"
+                IsEnabled="False"
+                SemanticProperties.Description="ID del producto, se genera automáticamente" />
+
+            <Label Text="Nombre del producto *" />
+            <Entry
+                x:Name="NombreProductoEntry"
+                Placeholder="Nombre del producto"
+                Keyboard="Text"
+                MaxLength="100"
+                ClearButtonVisibility="WhileEditing"
+                SemanticProperties.Description="Nombre del producto" />
+
+            <Label Text="Descripción *" />
+            <Entry
+                x:Name="DescripcionEntry"
+                Placeholder="Descripción del producto"
+                MaxLength="500"
+                ClearButtonVisibility="WhileEditing"
+                SemanticProperties.Description="Descripción del producto" />
+
+            <Label Text="Precio *" />
+            <Entry
+                x:Name="PrecioEntry"
+                Placeholder="Precio del producto"
+                Keyboard="Numeric"
+                MaxLength="12"
+                ClearButtonVisibility="WhileEditing"
+                SemanticProperties.Description="Precio del producto" />
+
+            <Label Text="Cantidad *" />
+            <Entry
+                x:Name="CantidadEntry"
+                Placeholder="Cantidad del producto"
+                Keyboard="Numeric"
+                MaxLength="9"
+                ClearButtonVisibility="WhileEditing"
+                SemanticProperties.Description="Cantidad del producto" />
+
+            <Label Text="Fecha de registro *" />
+            <DatePicker
+                x:Name="FechaRegistroPicker"
+                SemanticProperties.Description="Fecha de registro del producto" />
+
+            <Button
+                x:Name="GuardarButton"
+                Text="Guardar Producto"
+                Margin="0,15,0,0"
+                SemanticProperties.Description="Guarda la información del producto"
+                Clicked="GuardarButton_Clicked" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -1,49 +1,84 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using SQLite;
+﻿using SQLite;
 using RegistroProductos.Models;
 
-namespace RegistroProductos.Data
+namespace RegistroProductos.Data;
+
+/// Maneja la conexión e inicialización de la base de datos SQLite
+/// y las operaciones sobre la tabla de productos.
+public class SQLiteDatabase
 {
-    public class SQLiteDatabase
+    private const SQLiteOpenFlags Flags =
+        SQLiteOpenFlags.ReadWrite |
+        SQLiteOpenFlags.Create |
+        SQLiteOpenFlags.SharedCache;
+
+    private readonly string _dbPath;
+    private readonly SemaphoreSlim _initLock = new(1, 1);
+    private SQLiteAsyncConnection? _database;
+
+    public SQLiteDatabase(string dbPath)
     {
-        private SQLiteAsyncConnection _database;
+        _dbPath = dbPath;
+    }
 
-        public SQLiteDatabase(string dbPath)
-        {
-            _database = new SQLiteAsyncConnection(dbPath);
-            _database.CreateTableAsync<Productos>().Wait();
-        }
+    // Abre la conexión y crea la tabla la primera vez que se necesita,
+    // sin bloquear el hilo de la interfaz (sin .Wait()).
+    private async Task<SQLiteAsyncConnection> GetConnectionAsync()
+    {
+        if (_database is not null)
+            return _database;
 
-        //create
-        public async Task<int> AddProductosAsync(Productos producto) 
+        await _initLock.WaitAsync();
+        try
         {
-            return await _database.InsertAsync(producto);
-        }
+            if (_database is null)
+            {
+                var connection = new SQLiteAsyncConnection(_dbPath, Flags);
+                await connection.CreateTableAsync<Producto>();
+                _database = connection;
+            }
 
-        //Read
-        public async Task<List<Productos>> GetProductosAsync()
-        {
-            return await _database.Table<Productos>().ToListAsync();
+            return _database;
         }
+        finally
+        {
+            _initLock.Release();
+        }
+    }
 
-        //Read by Id
-        public async Task<Productos> GetProductosByIdAsync(int id)
-        {
-            return await _database.Table<Productos>().Where(p => p.IdProducto == id).FirstOrDefaultAsync();
-        }
+    // Create: guarda un producto. Devuelve el número de filas insertadas.
+    // Tras insertar, producto.IdProducto contiene el ID generado.
+    public async Task<int> GuardarProductoAsync(Producto producto)
+    {
+        var db = await GetConnectionAsync();
+        return await db.InsertAsync(producto);
+    }
 
-        //update
-        public async Task<int> UpdateProductoAsync(Productos producto)
-        {
-            return await _database.UpdateAsync(producto);
-        }
+    // Read
+    public async Task<List<Producto>> ObtenerProductosAsync()
+    {
+        var db = await GetConnectionAsync();
+        return await db.Table<Producto>().ToListAsync();
+    }
 
-        //Delete
-        public async Task<int> DeleteproductoAsync(Productos producto)
-        {
-            return await _database.DeleteAsync(producto);
-        }
+    // Read by Id
+    public async Task<Producto?> ObtenerProductoPorIdAsync(int id)
+    {
+        var db = await GetConnectionAsync();
+        return await db.FindAsync<Producto>(id);
+    }
+
+    // Update
+    public async Task<int> ActualizarProductoAsync(Producto producto)
+    {
+        var db = await GetConnectionAsync();
+        return await db.UpdateAsync(producto);
+    }
+
+    // Delete
+    public async Task<int> EliminarProductoAsync(Producto producto)
+    {
+        var db = await GetConnectionAsync();
+        return await db.DeleteAsync(producto);
     }
 }

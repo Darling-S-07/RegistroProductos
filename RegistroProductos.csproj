@@ -72,11 +72,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Controllers\" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <MauiXaml Update="Views\RegristroProductosPage.xaml">
+	  <MauiXaml Update="Views\RegistroProductosPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

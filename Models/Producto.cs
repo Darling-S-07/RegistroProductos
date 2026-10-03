@@ -1,23 +1,21 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using SQLite;
 
 namespace RegistroProductos.Models;
 
-using SQLite;
-
-public class Productos
-{
+public class Producto
+{ 
     [PrimaryKey, AutoIncrement]
-    public int IdProducto { get; set; }   
-    [MaxLength(100)]   
+    public int IdProducto { get; set; }
+
+    [MaxLength(100), NotNull]
     public string NombreProducto { get; set; } = string.Empty;
-    [MaxLength(500)]
+
+    [MaxLength(500), NotNull]
     public string Descripcion { get; set; } = string.Empty;
-    [MaxLength(12)]
+
     public decimal Precio { get; set; }
-    [MaxLength(9)]
+
     public int Cantidad { get; set; }
+
     public DateTime FechaRegistro { get; set; }
 }

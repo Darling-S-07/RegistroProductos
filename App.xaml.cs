@@ -11,7 +11,7 @@ namespace RegistroProductos
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            return new Window(new NavigationPage(new Views.RegristroProductosPage()));
+            return new Window(new NavigationPage(new Views.RegistroProductosPage()));
         }
     }
 }
